@@ -13,35 +13,24 @@ namespace FishRandomizer
         public static string[] Creatures =
         {
             "BloomCreature",
-            "Boomerang",
             "LavaLarva",
-            "OculusFish",
             "Eyeye",
             "Garryfish",
-            "GasoPod",
-            "Grabcrab",
-            "Grower",
             "Holefish",
-            "Hoverfish",
-            "Jellyray",
-            "Jumper",
+            "JellyRay",
             "Peeper",
             "RabbitRay",
             "Reefback",
             "Reginald",
             "SandShark",
-            "Spadefish",
             "Stalker",
-            "Bladderfish",
+            "BladderFish",
             "Mesmer",
             "Bleeder",
-            "Slime",
             "BoneShark",
             "CuteFish",
-            "Leviathan",
             "ReaperLeviathan",
             "CaveCrawler",
-            "BirdBehaviour",
             "Biter",
             "Shocker",
             "CrabSnake",
@@ -51,7 +40,6 @@ namespace FishRandomizer
             "Warper",
             "LavaLizard",
             "SeaDragon",
-            "GhostRay",
             "SeaEmperorBaby",
             "GhostLeviathan",
             "SeaEmperorJuvenile",
@@ -101,7 +89,7 @@ namespace FishRandomizer
                         var className = targetObject.name.Replace("(Clone)", "");
                         var isCreature = (Creatures.IndexOf(className) > -1);
                         
-                        Logger.Log(Logger.Level.Debug, "IsCreature: " + isCreature.ToString() + " | IsAlive: " + isAlive);
+                        Logger.Log(Logger.Level.Debug, "Class: " + className + " | IsCreature: " + isCreature.ToString() + " | IsAlive: " + isAlive);
 
                         if (isAlive && isCreature)
                         {
