@@ -92,7 +92,9 @@ namespace FishRandomizer
                     
                     LiveMixin liveMixin = gameObject.FindAncestor<LiveMixin>();
 
-                    try {
+                    if (liveMixin)
+                    {
+
                         targetObject = liveMixin.gameObject;
                         
                         var isAlive = liveMixin.IsAlive();
@@ -138,7 +140,7 @@ namespace FishRandomizer
 
                             UnityEngine.Object.Instantiate(newCreature, pos, rotation, parent);
                         }
-                    } catch (NullReferenceException) {}
+                    }
                 }
             }
         }

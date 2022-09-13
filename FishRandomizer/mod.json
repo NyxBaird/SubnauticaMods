@@ -2,7 +2,7 @@
   "Id": "FishRandomizer",
   "DisplayName": "Fish Randomizer",
   "Author": "NyxNotes",
-  "Version": "1.0.0",
+  "Version": "0.1.1",
   "Enable": true,
   "AssemblyName": "FishRandomizer.dll",
   "VersionDependencies": {
