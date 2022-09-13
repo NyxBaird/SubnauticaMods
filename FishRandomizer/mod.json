@@ -1,0 +1,12 @@
+﻿{
+  "Id": "FishRandomizer",
+  "DisplayName": "Fish Randomizer",
+  "Author": "NyxNotes",
+  "Version": "1.0.0",
+  "Enable": true,
+  "AssemblyName": "FishRandomizer.dll",
+  "VersionDependencies": {
+    "SMLHelper": "2.9.6"
+  },
+  "Game": "Subnautica"
+}
