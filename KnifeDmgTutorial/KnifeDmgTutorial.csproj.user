@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ReferencePath>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed\publicized_assemblies;C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed;C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\core;C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\QModManager;C:\Program Files (x86)\Steam\steamapps\common\Subnautica\QMods\Modding Helper;C:\Program Files (x86)\Steam\steamapps\common\Subnautica\Subnautica_Data\Managed</ReferencePath>
-  </PropertyGroup>
-</Project>
