@@ -84,6 +84,4 @@
         <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Subnautica\QMods\$(TargetName)&quot;" />
         <Exec Command="copy /Y &quot;$(ProjectDir)mod.json&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Subnautica\QMods\$(TargetName)\mod.json&quot;" />
     </Target>
-
-
 </Project>

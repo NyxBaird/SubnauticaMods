@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 using Logger = QModManager.Utility.Logger;
@@ -45,18 +42,6 @@ namespace FishRandomizer
             "SeaEmperorJuvenile",
             "GhostLeviatanVoid"
         };
-        
-
-        [HarmonyPatch(typeof(Player))]
-        [HarmonyPatch("Awake")]
-        internal class PatchPlayerOnAwake
-        {
-            [HarmonyPostfix]
-            public static void Postfix(Player __instance)
-            {
-                Logger.Log(Logger.Level.Debug, "Player awake!");
-            }
-        }
 
         [HarmonyPatch(typeof(Knife))]
         [HarmonyPatch("OnToolUseAnim")]
@@ -65,10 +50,6 @@ namespace FishRandomizer
             [HarmonyPostfix]
             public static void Postfix(Knife __instance, GUIHand hand)
             {
-                if (hand == null)
-                {
-                    Logger.Log(Logger.Level.Debug, "Hand not set");
-                }
                 var position = default(Vector3);
                 GameObject gameObject = null;
                 GameObject targetObject = null;
