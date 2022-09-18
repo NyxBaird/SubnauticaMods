@@ -62,11 +62,18 @@ namespace Migrate
 
             //Register Prey
             Migrators.Add(GetCreatureName(TechType.Peeper), new Migrator(TechType.Peeper, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
+            Migrators.Add(GetCreatureName(TechType.Boomerang), new Migrator(TechType.Boomerang, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
+            Migrators.Add(GetCreatureName(TechType.Eyeye), new Migrator(TechType.Eyeye, MigrationTypes.DielReverse, FoodChainStatus.Prey, 0.75));
+            Migrators.Add(GetCreatureName(TechType.Mesmer), new Migrator(TechType.Mesmer, MigrationTypes.DielTwilight, FoodChainStatus.Prey, 1.5));
             
             //Register Predators
             Migrators.Add(GetCreatureName(TechType.GhostLeviathan), new Migrator(TechType.GhostLeviathan, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 107));
             Migrators.Add(GetCreatureName(TechType.ReaperLeviathan), new Migrator(TechType.ReaperLeviathan, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 55));
+            Migrators.Add(GetCreatureName(TechType.Shocker), new Migrator(TechType.Shocker, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 20));
             Migrators.Add(GetCreatureName(TechType.Sandshark), new Migrator(TechType.Sandshark, MigrationTypes.DielTwilight, FoodChainStatus.Predator, 2));
+            
+            //Bonesharks have some unique locations and behaviors that make me reluctant to mess with this
+            // Migrators.Add(GetCreatureName(TechType.BoneShark), new Migrator(TechType.BoneShark, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 18));
             
             //Register Creatures outside the regular food chain
             Migrators.Add(GetCreatureName(TechType.Reefback), new Migrator(TechType.Reefback, MigrationTypes.DielReverse, FoodChainStatus.None, 70));
@@ -240,8 +247,8 @@ namespace Migrate
             //Adjust the traversal range based on creature specific factors
             AdjustTraversalRangeForCreature();
 
-            var MinHeight = _traversalRange["current"] - _traversalRange["min"];
-            var MaxHeight = _traversalRange["current"] + _traversalRange["max"];
+            var MinHeight = _traversalRange["current"] - _traversalRange["lower"];
+            var MaxHeight = _traversalRange["current"] + _traversalRange["upper"];
             
             var creatureHeight = _creature.transform.position.y;
 
@@ -305,6 +312,8 @@ namespace Migrate
          */
         private void AdjustTraversalRangeForCreature()
         {
+            Logger.Log(Logger.Level.Debug, "Adjusting traversal range for creature");
+            
             var medianDepth = Helpers.Traversals[MigrationType].Values[_currentLightIndex];
             var inColumn =  medianDepth > 0 && medianDepth < 1;
             
@@ -315,6 +324,8 @@ namespace Migrate
             //If the creature is a predator and not at its deepest traversal index then limit its upper range by size
             if (FoodChainStatus == FoodChainStatus.Predator && !inColumn)
                 _traversalRange["upper"] -= _traversalRange["upper"] / 100 * SizePlacement;
+            
+            Logger.Log(Logger.Level.Debug, "Finished adjusting traversal range for creature");
         }
 
         /*
@@ -347,15 +358,17 @@ namespace Migrate
             var name = __instance.name.Replace("(Clone)", "");
 
             string[] replaceableActions = { "SwimRandom" };
+            string[] activeBiomes = { "kooshZone", "mountains", "grandReef", "seaTreaderPath", "dunes", "bloodKelp", "GrassyPlateaus", "SparseReef", "kelpForest", "safeShallows" };
     
-            if (Helpers.Migrators.ContainsKey(name) && System.Array.IndexOf(replaceableActions, action) > -1)
+            //If our creature is a valid migrator and is performing a replaceable action and is in an active biome, process our creature for migration
+            if (Helpers.Migrators.ContainsKey(name) && Array.IndexOf(replaceableActions, action) > -1 && Array.IndexOf(activeBiomes, WorldPatch.World.GetBiome(__instance.transform.position).ToString()) > -1)
                 Helpers.Migrators[name].Migrate(__instance);
              
-            // Logger.Log(Logger.Level.Debug, __instance + " is performing " + action);
+            Logger.Log(Logger.Level.Debug, __instance + " is performing " + action);
         }
     }
-        
     
+
     //Handle all our time/light related details
     [HarmonyPatch(typeof(DayNightCycle))] 
     [HarmonyPatch("Update")]
@@ -379,9 +392,45 @@ namespace Migrate
             return (LightScalar < 5 && (OfDay > .15 && OfDay < .85));
         }
     }
+
+
+    [HarmonyPatch(typeof(LargeWorld))]
+    [HarmonyPatch("Awake")]
+    public class WorldPatch
+    {
+        public static LargeWorld World;
+        
+        [HarmonyPostfix]
+        public static void Postfix(LargeWorld __instance)
+        {
+            World = __instance;
+        }
+    }
+    
+    [HarmonyPatch(typeof(Player))]
+    [HarmonyPatch("Awake")]
+    public class PlayerPatch
+    {
+        public static Player Player;
+        
+        [HarmonyPostfix]
+        public static void Postfix(Player __instance)
+        {
+            Player = __instance;
+        }
+    }
+    
     
     public class Commands
     {
+        
+        [ConsoleCommand("GetBiome")]
+        public static string MigrateCmd()
+        {
+            Logger.Log(Logger.Level.Debug, "Received getBiome cmd!");
+            return $"Biome = " + WorldPatch.World.GetBiome(PlayerPatch.Player.transform.position);
+        }
+        
         [ConsoleCommand("migrate")]
         public static string MigrateCmd(string creatureName = "", string secondary = "")
         {
