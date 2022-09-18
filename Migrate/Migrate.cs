@@ -51,6 +51,9 @@ namespace Migrate
          */
         public static int[] Margins = { 5, 5 };
         
+        //How far should we try to move the creature up and down the water column per attempt
+        public static int MigrationAmount = 30;
+        
         
         static Helpers()
         {
@@ -246,23 +249,18 @@ namespace Migrate
             if (creatureHeight > MinHeight && creatureHeight < MaxHeight)
                 return;
 
-            if (creatureHeight < MinHeight)
-                MigrateUp();
-            
-            if (creatureHeight > MaxHeight)
-                MigrateDown();
-
-            Logger.Log(Logger.Level.Debug, _creature.name + " has a possible depth of " + _possibleDepth);
-        }
-
-        private void MigrateUp()
-        {
-            
-        }
-
-        private void MigrateDown()
-        {
             var orientation = _creature.transform.rotation * Vector3.forward;
+            var nextLoc = new Ray(_creature.transform.position, orientation).GetPoint(20);
+
+            if (creatureHeight < MinHeight)
+                nextLoc.y += Helpers.MigrationAmount;
+
+            if (creatureHeight > MaxHeight)
+                nextLoc.y -= Helpers.MigrationAmount;
+
+            _creature.leashPosition = nextLoc;
+            
+            Logger.Log(Logger.Level.Debug, _creature.name + " was sent from " + _creature.transform.position + " to " + nextLoc);
         }
 
         /*
