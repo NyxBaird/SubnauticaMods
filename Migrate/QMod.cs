@@ -4,7 +4,7 @@ using QModManager.API.ModLoading;
 using SMLHelper.V2.Handlers;
 using Logger = QModManager.Utility.Logger;
 
-namespace WanderQMod
+namespace MigrateQMod
 {
     [QModCore]
     public static class QMod
@@ -20,7 +20,7 @@ namespace WanderQMod
             Logger.Log(Logger.Level.Info, "Patched successfully!");
             
             //Register Commands
-            ConsoleCommandsHandler.Main.RegisterConsoleCommands(typeof(Wander.Commands));
+            ConsoleCommandsHandler.Main.RegisterConsoleCommands(typeof(Migrate.Commands));
         }
     }
     

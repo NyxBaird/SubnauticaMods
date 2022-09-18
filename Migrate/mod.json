@@ -1,10 +1,10 @@
 ﻿{
-  "Id": "FishRandomizer",
-  "DisplayName": "Fish Randomizer",
+  "Id": "Migrate",
+  "DisplayName": "Migrate",
   "Author": "NyxNotes",
   "Version": "0.1.1",
   "Enable": true,
-  "AssemblyName": "FishRandomizer.dll",
+  "AssemblyName": "Migrate.dll",
   "VersionDependencies": {
     "SMLHelper": "2.9.6"
   },

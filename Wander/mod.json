@@ -1,10 +1,10 @@
 ﻿{
-  "Id": "FishRandomizer",
-  "DisplayName": "Fish Randomizer",
+  "Id": "Wander",
+  "DisplayName": "Wander",
   "Author": "NyxNotes",
   "Version": "0.1.1",
-  "Enable": true,
-  "AssemblyName": "FishRandomizer.dll",
+  "Enable": false,
+  "AssemblyName": "Wander.dll",
   "VersionDependencies": {
     "SMLHelper": "2.9.6"
   },

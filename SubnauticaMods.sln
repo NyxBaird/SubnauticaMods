@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishRandomizer", "FishRandomizer\FishRandomizer.csproj", "{16FF4DD4-91B4-4251-A16D-B4FC8DCEA008}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wander", "Wander\Wander.csproj", "{FEBF808D-2160-43EC-9162-198BB6135FCE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrate", "Migrate\Migrate.csproj", "{1A79F159-03E3-48ED-8DCE-E553257B9F78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{16FF4DD4-91B4-4251-A16D-B4FC8DCEA008}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16FF4DD4-91B4-4251-A16D-B4FC8DCEA008}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16FF4DD4-91B4-4251-A16D-B4FC8DCEA008}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEBF808D-2160-43EC-9162-198BB6135FCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEBF808D-2160-43EC-9162-198BB6135FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEBF808D-2160-43EC-9162-198BB6135FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEBF808D-2160-43EC-9162-198BB6135FCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A79F159-03E3-48ED-8DCE-E553257B9F78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A79F159-03E3-48ED-8DCE-E553257B9F78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A79F159-03E3-48ED-8DCE-E553257B9F78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A79F159-03E3-48ED-8DCE-E553257B9F78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
