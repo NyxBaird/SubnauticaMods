@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using MoreLinq;
 using UnityEngine;
 using SMLHelper.V2.Commands;
 using Logger = QModManager.Utility.Logger;
@@ -338,11 +337,7 @@ namespace Migrate
                 Logger.Log(Logger.Level.Error, "Couldn't fetch depth for creature of type Null");
                 return 0;
             }
-            
-            //Check the biome to apply special cases to underground biomes/underwater islands
-            Logger.Log(Logger.Level.Debug);
-            
-            
+
             return Helpers.GetPossibleEntityDepth(_creature.transform.position);
         }
     }
@@ -427,25 +422,7 @@ namespace Migrate
         [ConsoleCommand("GetBiome")]
         public static string MigrateCmd()
         {
-            Logger.Log(Logger.Level.Debug, "Received getBiome cmd!");
             return $"Biome = " + WorldPatch.World.GetBiome(PlayerPatch.Player.transform.position);
         }
-        
-        [ConsoleCommand("migrate")]
-        public static string MigrateCmd(string creatureName = "", string secondary = "")
-        {
-            Logger.Log(Logger.Level.Debug, "Received Migrate cmd!");
-            return $"Parameters: {creatureName} {secondary}";
-        }
-        
-        // [ConsoleCommand("player")]
-        // public static string PlayerCmd()
-        // {
-            // Logger.Log(Logger.Level.Debug, "Registered Migrators:" + (Helpers.Migrators == null));
-            // foreach (KeyValuePair<string, Migrator> migrator in Helpers.Migrators)
-            //     Logger.Log(Logger.Level.Debug, "-" + migrator.Key);
-            //
-            // return $"Surface Height: " + Helpers.GetPossibleEntityDepth(Helpers.Player.transform.position);
-        // }
     }
 }
