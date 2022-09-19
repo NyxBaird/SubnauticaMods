@@ -59,20 +59,34 @@ namespace Migrate
             //Initialize our traversal paths
             InitTraversals();
 
-            //Register Prey
+            //Register Nocturnal Prey
             Migrators.Add(GetCreatureName(TechType.Peeper), new Migrator(TechType.Peeper, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
+            Migrators.Add(GetCreatureName(TechType.Oculus), new Migrator(TechType.Oculus, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
+            Migrators.Add(GetCreatureName(TechType.Bladderfish), new Migrator(TechType.Bladderfish, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             Migrators.Add(GetCreatureName(TechType.Boomerang), new Migrator(TechType.Boomerang, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
-            Migrators.Add(GetCreatureName(TechType.Eyeye), new Migrator(TechType.Eyeye, MigrationTypes.DielReverse, FoodChainStatus.Prey, 0.75));
-            Migrators.Add(GetCreatureName(TechType.Mesmer), new Migrator(TechType.Mesmer, MigrationTypes.DielTwilight, FoodChainStatus.Prey, 1.5));
+            Migrators.Add(GetCreatureName(TechType.Eyeye), new Migrator(TechType.Eyeye, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
+            Migrators.Add(GetCreatureName(TechType.Spadefish), new Migrator(TechType.Spadefish, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             
-            //Register Predators
-            Migrators.Add(GetCreatureName(TechType.GhostLeviathan), new Migrator(TechType.GhostLeviathan, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 107));
+            //Register Diurnal Prey
+            Migrators.Add(GetCreatureName(TechType.GarryFish), new Migrator(TechType.GarryFish, MigrationTypes.DielReverse, FoodChainStatus.Prey, 1));
+            Migrators.Add(GetCreatureName(TechType.HoleFish), new Migrator(TechType.HoleFish, MigrationTypes.DielReverse, FoodChainStatus.Prey, 0.75));
+            Migrators.Add(GetCreatureName(TechType.Reginald), new Migrator(TechType.Reginald, MigrationTypes.DielReverse, FoodChainStatus.Prey, 0.8));
+            
+            //Register Twilight Prey
+            Migrators.Add(GetCreatureName(TechType.Mesmer), new Migrator(TechType.Mesmer, MigrationTypes.DielReverse, FoodChainStatus.Prey, 1.5));
+            
+            //Register Nocturnal Predators
+            Migrators.Add(GetCreatureName(TechType.GhostLeviathan), new Migrator(TechType.GhostLeviathan, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 70)); // These are just so big that I actually sized them down from 107 in order to make this work better
             Migrators.Add(GetCreatureName(TechType.ReaperLeviathan), new Migrator(TechType.ReaperLeviathan, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 55));
             Migrators.Add(GetCreatureName(TechType.Shocker), new Migrator(TechType.Shocker, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 20));
+            Migrators.Add(GetCreatureName(TechType.Biter), new Migrator(TechType.Biter, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 1));
+            
+            //Register Twilight Predators
             Migrators.Add(GetCreatureName(TechType.Sandshark), new Migrator(TechType.Sandshark, MigrationTypes.DielTwilight, FoodChainStatus.Predator, 2));
             
-            //Bonesharks have some unique locations and behaviors that make me reluctant to mess with this
+            //Some creatures have some unique locations and behaviors that make me reluctant to mess with them
             // Migrators.Add(GetCreatureName(TechType.BoneShark), new Migrator(TechType.BoneShark, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 18));
+            // Migrators.Add(GetCreatureName(TechType.Stalker), new Migrator(TechType.Stalker, MigrationTypes.DielTwilight, FoodChainStatus.Predator, 4));
             
             //Register Creatures outside the regular food chain
             Migrators.Add(GetCreatureName(TechType.Reefback), new Migrator(TechType.Reefback, MigrationTypes.DielReverse, FoodChainStatus.None, 70));
@@ -246,22 +260,22 @@ namespace Migrate
             //Adjust the traversal range based on creature specific factors
             AdjustTraversalRangeForCreature();
 
-            var MinHeight = _traversalRange["current"] - _traversalRange["lower"];
-            var MaxHeight = _traversalRange["current"] + _traversalRange["upper"];
+            var minHeight = _traversalRange["current"] - _traversalRange["lower"];
+            var maxHeight = _traversalRange["current"] + _traversalRange["upper"];
             
             var creatureHeight = _creature.transform.position.y;
 
             //If our creature is within its traversal range then we don't need to do anything
-            if (creatureHeight > MinHeight && creatureHeight < MaxHeight)
+            if (creatureHeight > minHeight && creatureHeight < maxHeight)
                 return;
 
             var orientation = _creature.transform.rotation * Vector3.forward;
             var nextLoc = new Ray(_creature.transform.position, orientation).GetPoint(20);
 
-            if (creatureHeight < MinHeight)
+            if (creatureHeight < minHeight)
                 nextLoc.y += Helpers.MigrationAmount;
 
-            if (creatureHeight > MaxHeight)
+            if (creatureHeight > maxHeight)
                 nextLoc.y -= Helpers.MigrationAmount;
 
             _creature.leashPosition = nextLoc;
