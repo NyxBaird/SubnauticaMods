@@ -66,17 +66,17 @@ namespace Migrate
             Migrators.Add(GetCreatureName(TechType.Peeper), new Migrator(TechType.Peeper, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             Migrators.Add(GetCreatureName(TechType.Oculus), new Migrator(TechType.Oculus, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             Migrators.Add(GetCreatureName(TechType.Bladderfish), new Migrator(TechType.Bladderfish, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
-            Migrators.Add(GetCreatureName(TechType.Boomerang), new Migrator(TechType.Boomerang, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             Migrators.Add(GetCreatureName(TechType.Eyeye), new Migrator(TechType.Eyeye, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             Migrators.Add(GetCreatureName(TechType.Spadefish), new Migrator(TechType.Spadefish, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             
-            // //Register Diurnal Prey
+            //Register Diurnal Prey
             Migrators.Add(GetCreatureName(TechType.GarryFish), new Migrator(TechType.GarryFish, MigrationTypes.DielReverse, FoodChainStatus.Prey, 1));
             Migrators.Add(GetCreatureName(TechType.HoleFish), new Migrator(TechType.HoleFish, MigrationTypes.DielReverse, FoodChainStatus.Prey, 0.75));
             Migrators.Add(GetCreatureName(TechType.Reginald), new Migrator(TechType.Reginald, MigrationTypes.DielReverse, FoodChainStatus.Prey, 0.8));
             
-            // //Register Twilight Prey
+            //Register Twilight Prey
             Migrators.Add(GetCreatureName(TechType.Mesmer), new Migrator(TechType.Mesmer, MigrationTypes.DielReverse, FoodChainStatus.Prey, 1.5));
+            Migrators.Add(GetCreatureName(TechType.Boomerang), new Migrator(TechType.Boomerang, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             
             //Register Nocturnal Predators
             Migrators.Add(GetCreatureName(TechType.GhostLeviathan), new Migrator(TechType.GhostLeviathan, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 70)); // These are just so big that I actually sized them down from 107 in order to make this work better
@@ -84,7 +84,7 @@ namespace Migrate
             Migrators.Add(GetCreatureName(TechType.Shocker), new Migrator(TechType.Shocker, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 20));
             Migrators.Add(GetCreatureName(TechType.Biter), new Migrator(TechType.Biter, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 1));
             
-            // //Register Twilight Predators
+            //Register Twilight Predators
             Migrators.Add(GetCreatureName(TechType.Sandshark), new Migrator(TechType.Sandshark, MigrationTypes.DielTwilight, FoodChainStatus.Predator, 2));
             
             //Some creatures have some unique locations and behaviors that make me reluctant to mess with them
