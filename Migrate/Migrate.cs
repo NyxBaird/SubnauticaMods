@@ -48,10 +48,13 @@ namespace Migrate
          * Margins = {top, bottom}
          * The amount of space preserved at the top and bottom of the water column to which creatures will not be sent by this mod
          */
-        public static int[] Margins = { 5, 5 };
+        public static int[] Margins = { 10, 10 };
         
         //How far should we try to move the creature up and down the water column per attempt
         public static int MigrationAmount = 30;
+
+        //This is the depth our creature will assume the water column is if the bottom is unloaded and therefore unable to be found
+        public static int FalseBottom = 300;
         
         
         static Helpers()
@@ -67,12 +70,12 @@ namespace Migrate
             Migrators.Add(GetCreatureName(TechType.Eyeye), new Migrator(TechType.Eyeye, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             Migrators.Add(GetCreatureName(TechType.Spadefish), new Migrator(TechType.Spadefish, MigrationTypes.DielNocturnal, FoodChainStatus.Prey, 0.75));
             
-            //Register Diurnal Prey
+            // //Register Diurnal Prey
             Migrators.Add(GetCreatureName(TechType.GarryFish), new Migrator(TechType.GarryFish, MigrationTypes.DielReverse, FoodChainStatus.Prey, 1));
             Migrators.Add(GetCreatureName(TechType.HoleFish), new Migrator(TechType.HoleFish, MigrationTypes.DielReverse, FoodChainStatus.Prey, 0.75));
             Migrators.Add(GetCreatureName(TechType.Reginald), new Migrator(TechType.Reginald, MigrationTypes.DielReverse, FoodChainStatus.Prey, 0.8));
             
-            //Register Twilight Prey
+            // //Register Twilight Prey
             Migrators.Add(GetCreatureName(TechType.Mesmer), new Migrator(TechType.Mesmer, MigrationTypes.DielReverse, FoodChainStatus.Prey, 1.5));
             
             //Register Nocturnal Predators
@@ -81,7 +84,7 @@ namespace Migrate
             Migrators.Add(GetCreatureName(TechType.Shocker), new Migrator(TechType.Shocker, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 20));
             Migrators.Add(GetCreatureName(TechType.Biter), new Migrator(TechType.Biter, MigrationTypes.DielNocturnal, FoodChainStatus.Predator, 1));
             
-            //Register Twilight Predators
+            // //Register Twilight Predators
             Migrators.Add(GetCreatureName(TechType.Sandshark), new Migrator(TechType.Sandshark, MigrationTypes.DielTwilight, FoodChainStatus.Predator, 2));
             
             //Some creatures have some unique locations and behaviors that make me reluctant to mess with them
@@ -90,7 +93,6 @@ namespace Migrate
             
             //Register Creatures outside the regular food chain
             Migrators.Add(GetCreatureName(TechType.Reefback), new Migrator(TechType.Reefback, MigrationTypes.DielReverse, FoodChainStatus.None, 70));
-            
             
             //This records our biggest and smallest creature sizes for reference
             SetMigratorSizeExtremes();
@@ -107,20 +109,12 @@ namespace Migrate
         {
             RaycastHit hit;
     
-            float surfaceToEntity = -1;
-            float entityToTerrain = -1;
-            
-            Vector3 pos = entityPos;
-            pos.y = 0;
-            
-            // Cast a ray straight downwards.
-            if (Physics.Raycast(new Ray(pos, -Vector3.up), out hit))
-                surfaceToEntity = hit.distance;
-            
+            float entityToTerrain = Helpers.FalseBottom;
+
             if (Physics.Raycast(new Ray(entityPos, -Vector3.up), out hit))
                 entityToTerrain = hit.distance;
-    
-            return surfaceToEntity + entityToTerrain;
+
+            return Math.Abs(entityPos.y) + entityToTerrain;
         }
     
         /*
@@ -251,8 +245,8 @@ namespace Migrate
         {
             _creature = instance;
             _possibleDepth = this.GetPossibleDepth();
-            
-            Logger.Log(Logger.Level.Debug, _creature.name + " is performing " + MigrationType);
+
+            Logger.Log(Logger.Level.Debug, _creature.name + " has possible depth of " + _possibleDepth + " and is performing " + MigrationType);
             
             //Set the traversal range based on environmental factors
             SetTraversalRange();
@@ -265,22 +259,36 @@ namespace Migrate
             
             var creatureHeight = _creature.transform.position.y;
 
-            //If our creature is within its traversal range then we don't need to do anything
+            //If our creature is within its traversal range or is bigger than its traversal range then we don't need to do anything
             if (creatureHeight > minHeight && creatureHeight < maxHeight)
                 return;
 
-            var orientation = _creature.transform.rotation * Vector3.forward;
-            var nextLoc = new Ray(_creature.transform.position, orientation).GetPoint(20);
+            // var orientation = _creature.transform.rotation * Vector3.forward;
+            var nextLoc = _creature.leashPosition; //new Ray(_creature.transform.position, orientation).GetPoint(20);
+            var distanceTravelled = _creature.transform.position - nextLoc;
+            var avgDistance = Math.Abs((distanceTravelled.x + distanceTravelled.z) / 2);
 
             if (creatureHeight < minHeight)
-                nextLoc.y += Helpers.MigrationAmount;
+                nextLoc.y += avgDistance;
 
             if (creatureHeight > maxHeight)
-                nextLoc.y -= Helpers.MigrationAmount;
+                nextLoc.y -= avgDistance;
+
+            if (Math.Abs(nextLoc.y) < Helpers.Margins[0])
+            {
+                Logger.Log(Logger.Level.Debug, "NextLoc " + nextLoc.y + " breached our top margin. Setting to " + Helpers.Margins[0]);
+                nextLoc.y = -Helpers.Margins[0];
+            }
+
+            if (GetDistanceFromBottom() < Helpers.Margins[1])
+            {
+                Logger.Log(Logger.Level.Debug, "NextLoc " + nextLoc.y + " breached our bottom margin. Setting to " + (_possibleDepth + Helpers.Margins[1]) + " DFB: " + GetDistanceFromBottom());
+                nextLoc.y = _possibleDepth + Helpers.Margins[1];
+            }
 
             _creature.leashPosition = nextLoc;
             
-            Logger.Log(Logger.Level.Debug, _creature.name + " was sent from " + _creature.transform.position + " to " + nextLoc);
+            Logger.Log(Logger.Level.Debug, _creature.name + " was sent from " + _creature.transform.position + " to " + nextLoc + " with an avg distance travelled of " + avgDistance);
         }
 
         /*
@@ -315,7 +323,7 @@ namespace Migrate
             range["upper"] = _possibleDepth * upperDiff;
             range["lower"] = _possibleDepth * lowerDiff;
 
-            Logger.Log(Logger.Level.Debug, "The water column is " + _possibleDepth + " deep. Fish is @ " + _creature.transform.position.y + " and should currently be around " + range["current"] + " with " + range["lower"] + " below & " + range["upper"] + " above them in their traversal range.");
+            Logger.Log(Logger.Level.Debug, "The water column is " + _possibleDepth + " deep. Fish is @ " + _creature.transform.position.y + " and should be between " + (range["current"] - range["lower"]) + " & " + (range["current"] + range["upper"]) + " (Target: " + range["current"] + ")");
 
             _traversalRange = range;
         }
@@ -325,8 +333,6 @@ namespace Migrate
          */
         private void AdjustTraversalRangeForCreature()
         {
-            Logger.Log(Logger.Level.Debug, "Adjusting traversal range for creature");
-            
             var medianDepth = Helpers.Traversals[MigrationType].Values[_currentLightIndex];
             var inColumn =  medianDepth > 0 && medianDepth < 1;
             
@@ -337,8 +343,18 @@ namespace Migrate
             //If the creature is a predator and not at its deepest traversal index then limit its upper range by size
             if (FoodChainStatus == FoodChainStatus.Predator && !inColumn)
                 _traversalRange["upper"] -= _traversalRange["upper"] / 100 * SizePlacement;
+        }
+
+        private float GetDistanceFromBottom()
+        {
+            RaycastHit hit;
             
-            Logger.Log(Logger.Level.Debug, "Finished adjusting traversal range for creature");
+            float entityToTerrain = Helpers.FalseBottom;
+
+            if (Physics.Raycast(new Ray(_creature.transform.position, -Vector3.up), out hit))
+                entityToTerrain = hit.distance;
+
+            return entityToTerrain;
         }
 
         /*
@@ -346,12 +362,6 @@ namespace Migrate
          */
         private float GetPossibleDepth()
         {
-            if (_creature == null)
-            {
-                Logger.Log(Logger.Level.Error, "Couldn't fetch depth for creature of type Null");
-                return 0;
-            }
-
             return Helpers.GetPossibleEntityDepth(_creature.transform.position);
         }
     }
@@ -363,17 +373,21 @@ namespace Migrate
         [HarmonyPostfix]
         public static void Postfix(Creature __instance)
         {
+            if (__instance.GetBestAction() == null) 
+                return;
+                
             var action = __instance.GetBestAction().ToString().Split('(').Last().Replace(")", "");
             var name = __instance.name.Replace("(Clone)", "");
 
             string[] replaceableActions = { "SwimRandom" };
-            string[] activeBiomes = { "kooshZone", "mountains", "grandReef", "seaTreaderPath", "dunes", "bloodKelp", "GrassyPlateaus", "SparseReef", "kelpForest", "safeShallows" };
+            string[] activeBiomes = { "kooshZone", "mountains", "grandReef", "seaTreaderPath", "dunes", "bloodKelp", "GrassyPlateaus", "SparseReef", "kelpForest" };
     
             //If our creature is a valid migrator and is performing a replaceable action and is in an active biome, process our creature for migration
             if (Helpers.Migrators.ContainsKey(name) && Array.IndexOf(replaceableActions, action) > -1 && Array.IndexOf(activeBiomes, WorldPatch.World.GetBiome(__instance.transform.position).ToString()) > -1)
                 Helpers.Migrators[name].Migrate(__instance);
              
-            Logger.Log(Logger.Level.Debug, __instance + " is performing " + action);
+            if (Helpers.Migrators.ContainsKey(name))
+                Logger.Log(Logger.Level.Debug, __instance + " is performing " + action);
         }
     }
     
@@ -437,6 +451,20 @@ namespace Migrate
         public static string MigrateCmd()
         {
             return $"Biome = " + WorldPatch.World.GetBiome(PlayerPatch.Player.transform.position);
+        }
+        
+        [ConsoleCommand("playerSpeed")]
+        public static string PlayerSpeedCmd(int speed = 1)
+        {
+            PlayerPatch.Player.movementSpeed = speed;
+            
+            return $"Parameters: {speed}";
+        }
+        
+        [ConsoleCommand("margins")]
+        public static string MarginsCmd()
+        {
+            return $"" + Helpers.Margins[0] + " | " + Helpers.Margins[1];
         }
     }
 }
