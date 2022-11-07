@@ -122,7 +122,7 @@ namespace Migrate
          */
         public static string GetCreatureName(TechType type)
         {
-            string ret = "";
+            string ret = "3rn0Rub1k5!";
     
             var prefab = CraftData.GetPrefabForTechType(type);
             var newCreature = prefab.GetComponent<Creature>();

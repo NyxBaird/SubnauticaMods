@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 using Logger = QModManager.Utility.Logger;
@@ -7,42 +8,68 @@ namespace FishRandomizer
 {
     public class FishRandomizer
     {
-        public static string[] Creatures =
+        public static List<string> Creatures = new List<string>();
+        
+        [HarmonyPatch(typeof(Player))]
+        [HarmonyPatch("Awake")]
+        public class PlayerPatch
         {
-            "BloomCreature",
-            "LavaLarva",
-            "Eyeye",
-            "Garryfish",
-            "Holefish",
-            "JellyRay",
-            "Peeper",
-            "RabbitRay",
-            "Reefback",
-            "Reginald",
-            "SandShark",
-            "Stalker",
-            "BladderFish",
-            "Mesmer",
-            "Bleeder",
-            "BoneShark",
-            "CuteFish",
-            "ReaperLeviathan",
-            "CaveCrawler",
-            "Biter",
-            "Shocker",
-            "CrabSnake",
-            "SpineEel",
-            "SeaTreader",
-            "CrabSquid",
-            "Warper",
-            "LavaLizard",
-            "SeaDragon",
-            "SeaEmperorBaby",
-            "GhostLeviathan",
-            "SeaEmperorJuvenile",
-            "GhostLeviatanVoid"
-        };
-
+            public static Player Player;
+        
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                //Vanilla Creatures
+                // Creatures.Add("LavaLarva");
+                // Creatures.Add("Eyeye");
+                // Creatures.Add("Garryfish");
+                // Creatures.Add("Holefish");
+                // Creatures.Add("JellyRay");
+                // Creatures.Add("Peeper");
+                // Creatures.Add("RabbitRay");
+                // Creatures.Add("Reefback");
+                // Creatures.Add("Reginald");
+                // Creatures.Add("SandShark");
+                // Creatures.Add("Stalker");
+                // Creatures.Add("BladderFish");
+                // Creatures.Add("Mesmer");
+                // Creatures.Add("Bleeder");
+                // Creatures.Add("BoneShark");
+                // Creatures.Add("CuteFish");
+                // Creatures.Add("ReaperLeviathan");
+                // Creatures.Add("CaveCrawler");
+                // Creatures.Add("Biter");
+                // Creatures.Add("Shocker");
+                // Creatures.Add("CrabSnake");
+                // Creatures.Add("SpineEel");
+                // Creatures.Add("SeaTreader");
+                // Creatures.Add("CrabSquid");
+                // Creatures.Add("Warper");
+                // Creatures.Add("LavaLizard");
+                // Creatures.Add("SeaDragon");
+                // Creatures.Add("SeaEmperorBaby");
+                // Creatures.Add("GhostLeviathan");
+                // Creatures.Add("SeaEmperorJuvenile");
+                
+                if (QModManager.API.QModServices.Main.ModPresent("DeExtinction"))
+                {
+                    Logger.Log(Logger.Level.Debug, "DeExtinction Detected, Loading Creatures");
+                    
+                    //De-Extinction Creatures
+                    Creatures.Add("StellarThalassacean");
+                    Creatures.Add("JasperThalassacean");
+                    Creatures.Add("GrandGlider");
+                    Creatures.Add("GulperLeviathan");
+                    Creatures.Add("Axetail");
+                    Creatures.Add("RibbonRay");
+                    Creatures.Add("Twisteel");
+                    Creatures.Add("Filtorb");
+                    Creatures.Add("JellySpinner");
+                    Creatures.Add("TriangleFish");
+                }
+            }
+        }
+        
         [HarmonyPatch(typeof(Knife))]
         [HarmonyPatch("OnToolUseAnim")]
         internal class PatchCreatureOnTakeDamage
@@ -86,13 +113,38 @@ namespace FishRandomizer
                             TechType getRandomCreature()
                             {
                                 var random = new System.Random();
-                                var rand = random.Next(0, Creatures.Length);
+                                var rand = random.Next(0, Creatures.Count);
 
-                                Enum.TryParse(Creatures[rand], out TechType type);
+                                var creature = Creatures[rand];
+
+                                if (creature == "SandShark")
+                                    creature = "Sandshark";
+                                
+                                if (creature == "Garryfish")
+                                    creature = "GarryFish";
+                                
+                                if (creature == "Holefish")
+                                    creature = "HoleFish";
+
+                                if (creature == "CrabSnake")
+                                    creature = "Crabsnake";
+                                
+                                if (creature == "BladderFish")
+                                    creature = "Bladderfish";
+                                
+                                if (creature == "JellyRay")
+                                    creature = "Jellyray";
+
+                                //De-Extinction checks
+                                
+                                if (creature == "TriangleFish")
+                                    creature = "Trianglefish";
+
+                                Enum.TryParse(creature, out TechType type);
 
                                 if (type == TechType.None)
                                 {
-                                    Logger.Log(Logger.Level.Debug, "Couldn't fetch " + Creatures[rand] + " as random creature!");
+                                    Logger.Log(Logger.Level.Debug, "Couldn't fetch " + creature + " as random creature!");
                                     type = getRandomCreature();
                                 }
 

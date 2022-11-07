@@ -76,6 +76,7 @@
         <Compile Include="QMod.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="Migrate.zip" />
       <Content Include="mod.json" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
